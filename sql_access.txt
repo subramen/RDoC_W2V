@@ -1,0 +1,9 @@
+ssh -L 6432:localhost:5432 medline@130.49.206.139
+
+pwd: medline
+
+ssh medline@130.49.206.139 "nohup sh ~/Documents/ws_ss_team_prj/exec.sh > /dev/null 2>&1 &"
+
+scp medline@130.49.206.139:~/Documents/ws_ss_team_prj/output.psv .\
+
+
