@@ -1,4 +1,5 @@
 from nltk import word_tokenize
+from nltk.corpus import stopwords
 import io
 import pandas as pd
 import re
@@ -6,52 +7,6 @@ import numpy as np
 from collections import defaultdict
 
 
-# ARCHIVED
-# def sql_out_to_df():
-#     txt = open('abstracts.csv','r',  encoding='utf-8')
-#     out = []
-
-#     for l in txt:
-#         try:
-#             comma = l.index(',')
-#         except ValueError:
-#             continue
-#         pmid = l[:comma]
-#         content = l[comma+1:]
-#         out.append(pmid+'\t'+content)
-        
-            
-#     with open('abstracts_kv.tsv','w',encoding='utf-8') as f:
-#         f.writelines(out)
-#     txt.close()
-
-#     df = pd.read_csv('abstracts_kv.tsv',sep='\t')
-#     df.columns = ['pmid', 'content']
-#     df2 = df.content.str.split('\.,').apply(pd.Series, 1)
-#     8180 pmids have multiple delims, ignoring them for now
-#     df2 = df2[[0,1]]
-#     df2.columns = ['title','abstract']
-#     df2['pmid'] = df['pmid']
-
-#     #handle abstracs which are null because title<->abstract delimiter was not .,
-#     df2['abstract'] = np.where(df2.abstract.isnull(), df2.title, df2.abstract)
-#     df3 = df2.dropna(how='any')
-
-#     # combine sectioned abstracts
-#     s=df3.pmid.value_counts()
-#     mult_pmid = df3[df3.pmid.isin(s.index[s>1])]
-#     single_pmid = df3[~df3.pmid.isin(s.index[s>1])]
-
-#     mult_pmid2 = mult_pmid.groupby(['pmid']).abstract.transform(lambda x: ' '.join(x))
-#     mult_pmid['abstract'] = mult_pmid2
-#     mult_pmid = mult_pmid.drop_duplicates(subset=['pmid','abstract'])
-
-#     data_df = single_pmid.append(mult_pmid)
-#     data_df['content'] = np.where(data_df.title!=data_df.abstract, data_df.title+' '+data_df.abstract, data_df.abstract)
-
-#     # data_df.to_pickle('data_df.pkl')
-
-#     data = data_df[['pmid', 'content']]
 
 def get_df_from_psv(fout=None):
     with open('data/output.psv', encoding="utf-8") as f:
@@ -126,9 +81,12 @@ def clean_line_generator(df_pkl=None):
         data_df = get_df_from_psv()
     else:
         data_df = pd.read_pickle(df_pkl)
-    with open('data/one-abstract-per-line.txt', 'w') as f:
+    data_df = data_df[data_df.content.notnull()]
+    with open('/home/sus118/rdoc_w2v/data/one-abstract-per-line.txt', 'w') as f:
         count = 0
         for abst in iter(data_df.content):
+            if not abst:
+                continue
             abst = abbr_expander(abst)
             # Make post-period uppercase chars lower
             abst = re.sub(r"(?<=\. )[A-Z]",lambda t:t.group().lower(), abst)
@@ -136,9 +94,8 @@ def clean_line_generator(df_pkl=None):
             f.write(abst+'\n')
             count+=1
             if count%10000==0:
-                print(f"{count} done")
-
+                print(f'{count} done')
     
 
 if __name__=="__main__":
-    clean_line_generator()
+    clean_line_generator('/home/sus118/rdoc_w2v/data/datadf_2019-11-12_174955.984110.pkl')
