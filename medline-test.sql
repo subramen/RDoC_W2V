@@ -4,7 +4,7 @@ select distinct
         meshheading.pmid, 
         meshheading.descriptorname, 
         meshheading.descriptorname_ui,
-        qua	lifier.value,
+        qualifier.value,
         publicationtype.value,
         keywords.value,
         keywords.majortopicyn

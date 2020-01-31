@@ -10,6 +10,11 @@ scp medline@130.49.206.139:~/Documents/ws_ss_team_prj/output.psv .\
 
 triads-dl:
 ssh sus118@130.49.206.138
+
 /mnt/c/Users/suraj/Documents/RDoC_W2V$ scp preprocessor.py sus118@130.49.206.138:~/rdoc_w2v
+
 ipython notebook --no-browser --port=9889
+
 ssh -N -f -L localhost:8888:localhost:9889 sus118@130.49.206.138
+
+ssh sus118@130.49.206.138 "nohup bash -ci ~/rdoc_w2v/data/exec.sh > ~/rdoc_w2v/data/nohup.out 2>&1 &" 

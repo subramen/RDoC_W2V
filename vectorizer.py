@@ -1,5 +1,4 @@
 from gensim.models import Word2Vec
-import tempfile
 
 class sentenceGenerator: # use limit for sampling
     def __init__(self, f, limit=None):
@@ -13,13 +12,20 @@ class sentenceGenerator: # use limit for sampling
                 break
             c+=1
             yield l.split()
+            
+            
 
+def get_model(n=None):
+    fname = '/home/sus118/rdoc_w2v/data/one-abstract-per-line.txt'
+    print(f"Starting model generation on {n} sentences")
+    sg=sentenceGenerator(fname,n)
+    model = Word2Vec(sg, size=200, window=5, min_count=3, sg=1, hs=1, workers=6)
+    model.save(f'/home/sus118/rdoc_w2v/models/w2v_{n}.model')
+    print("Done")
 
-fname = '/home/sus118/rdoc_w2v/data/one-abstract-per-line.txt'
-sg=sentenceGenerator(fname)
-model = Word2Vec(sg, size=200, window=5, min_count=3, sg=1, hs=1, workers=6)
-# word_vectors = model.wv
-
-with tempfile.NamedTemporaryFile(prefix='gensim-model-', delete=False) as tmp:
-    temporary_filepath = tmp.name
-    model.save(temporary_filepath)
+if __name__=="__main__":
+    import sys
+    if len(sys.argv)>1:
+        get_model(sys.argv[1])
+    else:
+        get_model()
