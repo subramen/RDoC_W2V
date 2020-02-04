@@ -3,3 +3,8 @@ data/one-abstract-per-line.txt
 data/oapl_lite.txt
 *.psv
 *.txt
+archive/FinalResults.csv
+*.xlsx
+archive/medline-test.sql
+*.docx
+*.pdf
